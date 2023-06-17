@@ -1,12 +1,16 @@
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static java.lang.System.out;
+import static jdk.jfr.internal.SecuritySupport.getAbsolutePath;
 import static org.apache.bookkeeper.bookie.Cookie.readFromDirectory;
 import static org.apache.bookkeeper.bookie.Cookie.newBuilder;
 
@@ -21,7 +25,7 @@ public class TestCookie {
     @Before
     public void setUp(){
         int layoutVersion = 5;
-        String bookieId = "test";
+        String bookieId = "160.160.160.160:8000";
         String journalDirs = "journal";
         String ledgerDirs = "ledger";
         String instanceId = "instance";
@@ -45,7 +49,9 @@ public class TestCookie {
         validFile = new File(validPath);
         emptyStringFile = new File(empty);
 
-        this.validPath = new File("/home/gianl/Desktop/bookkeeper/bookkeeper-server/");
+        Path path = Paths.get("");
+        String directoryName = path.toAbsolutePath().toString();
+        this.validPath = new File(directoryName);
     }
 
     @Test
@@ -86,6 +92,16 @@ public class TestCookie {
 
     @Test
     public void isBookieHostCreatedFromIpTest() throws IOException {
+        String invalidBookieId = "test:test";
+        String emptyBookieId = "";
+        myBuider.setBookieId(invalidBookieId);
+        Cookie cookieInvalidBookieId = myBuider.build();
+        myBuider.setBookieId(emptyBookieId);
+        Cookie cookieEmptyBookieID = myBuider.build();
+
+        Assert.assertFalse(cookieInvalidBookieId.isBookieHostCreatedFromIp());
+        Assert.assertFalse(cookieEmptyBookieID.isBookieHostCreatedFromIp());
+        Assert.assertTrue(myTestCookie.isBookieHostCreatedFromIp());
     }
 
     @Test
@@ -120,5 +136,12 @@ public class TestCookie {
         cookieValidFile = readFromDirectory(validPath);
 
         Assert.assertTrue(myTestCookie.equals(cookieValidFile));
+    }
+
+    @After
+    public void cleanEnvironment(){
+        validFile.delete();
+        File version = new File(validPath+"/VERSION");
+        version.delete();
     }
 }
