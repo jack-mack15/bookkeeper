@@ -1,3 +1,4 @@
+import org.apache.bookkeeper.bookie.BookieImpl;
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
 import org.apache.bookkeeper.conf.AbstractConfiguration;
@@ -10,6 +11,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 
 import java.io.*;
 import java.net.UnknownHostException;
@@ -144,16 +146,6 @@ public class TestCookie {
         Assert.assertTrue(myTestCookie.equals(cookieValidFile));
     }
 
-    @Test
-    public void generateCookieTEst() throws UnknownHostException {
-        ServerConfiguration serverConfiguration = new ServerConfiguration();
-        ServerConfiguration clientConfiguration = new ServerConfiguration(new ClientConfiguration());
-
-        //aggiungere mock su BookieImpl.getBookieId(conf) che ritorni un BookieId di test
-
-        Builder serverBuilder = generateCookie(serverConfiguration);
-        //Builder clientBuilder = generateCookie(clientConfiguration);
-    }
 
     @Test
     public void readFromRegistrationManagerWithBookieTest(){
