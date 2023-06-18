@@ -1,18 +1,24 @@
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
+import org.apache.bookkeeper.conf.AbstractConfiguration;
+import org.apache.bookkeeper.conf.ClientConfiguration;
+import org.apache.bookkeeper.conf.ServerConfiguration;
+import org.apache.bookkeeper.discover.RegistrationManager;
+import org.apache.bookkeeper.discover.ZKRegistrationManager;
+import org.apache.bookkeeper.meta.NullMetadataBookieDriver;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static java.lang.System.out;
 import static jdk.jfr.internal.SecuritySupport.getAbsolutePath;
-import static org.apache.bookkeeper.bookie.Cookie.readFromDirectory;
-import static org.apache.bookkeeper.bookie.Cookie.newBuilder;
+import static org.apache.bookkeeper.bookie.Cookie.*;
 
 public class TestCookie {
 
@@ -137,6 +143,32 @@ public class TestCookie {
 
         Assert.assertTrue(myTestCookie.equals(cookieValidFile));
     }
+
+    @Test
+    public void generateCookieTEst() throws UnknownHostException {
+        ServerConfiguration serverConfiguration = new ServerConfiguration();
+        ServerConfiguration clientConfiguration = new ServerConfiguration(new ClientConfiguration());
+
+        //aggiungere mock su BookieImpl.getBookieId(conf) che ritorni un BookieId di test
+
+        Builder serverBuilder = generateCookie(serverConfiguration);
+        //Builder clientBuilder = generateCookie(clientConfiguration);
+    }
+
+    @Test
+    public void readFromRegistrationManagerWithBookieTest(){
+        //QUESTO è DA RISOLVERE IN QUALCHE MODO
+        //per creeare il BookieId usa metodo static parse(stringa)
+        //registration manager ha 3 implementazioni, zkregistrationmanager,
+        //nullmetadatabookiedriver, e etcdregistrationmanager
+
+        RegistrationManager nullRegistrationManager = new NullMetadataBookieDriver.NullRegistrationManager();
+        //RegistrationManager zkRegistrationManager = new ZKRegistrationManager();
+
+    }
+
+    @Test
+    public void readFromRegistrationManagerWithConfTest(){}
 
     @After
     public void cleanEnvironment(){
