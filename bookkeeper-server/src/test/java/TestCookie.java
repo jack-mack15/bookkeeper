@@ -1,3 +1,4 @@
+import org.apache.bookkeeper.bookie.BookieException;
 import org.apache.bookkeeper.bookie.BookieImpl;
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
@@ -161,6 +162,7 @@ public class TestCookie {
 
     @Test
     public void readFromRegistrationManagerWithConfTest(){}
+
 
     @After
     public void cleanEnvironment(){
