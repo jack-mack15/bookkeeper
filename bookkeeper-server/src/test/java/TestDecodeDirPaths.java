@@ -18,8 +18,10 @@ public class TestDecodeDirPaths {
     public static Collection<String[]> getParameters(){
         return Arrays.asList(new String[][]{
                 {"3\tpath1\tpath2\tpath3", "path1","path2","path3"}, // expected, input1, input2, input3
-                {"3\tpath1\tpath2\t", "path1","path2",""}, // expected, input1, input2, input3
-                {"3\t\t\t", "","",""}, // expected, input1, input2, input3
+                {"3\tpath1\tpath2\t", "path1","path2",""},           // expected, input1, input2, input3
+                {"3\tnull\t\t", null,"",""},                                   // expected, input1, input2, input3
+                {"3\tpath1\t\tnull", "path1","",null},                               // expected, input1, input2, input3
+                {"3\t\tnull\tpath3", "",null,"path3"}                                // expected, input1, input2, input3
         });
     }
 

@@ -13,7 +13,7 @@ import java.util.Collection;
 import static org.apache.bookkeeper.bookie.Cookie.newBuilder;
 
 @RunWith(value= Parameterized.class)
-public class TestVerify {
+public class TestVerifyVerifySuperSet {
 
     private String expected;
     private Cookie firstCookie;
@@ -41,15 +41,20 @@ public class TestVerify {
     @Parameters
     public static Collection<String[]> getParameters(){
         return Arrays.asList(new String[][]{
+                //casi di test category partitioning con comb uni dimensionale
                 {"ok",index,ledger,bookieId,instanceId,journal,"3"},
                 {"null",index,null,null,null,"","5"},
                 {"too old",null,ledger,null,"",null,"0"},
                 {"too old","","",null,instanceId,null,"0"},
                 {"null",null,null,"",null,journal,"6"},
+
+                //ulteriori casi di test per aumentare la coverage
+                {"not matching",index,ledger,bookieId,instanceId+"2",journal,"3"},
+                {"not matching",index,ledger,bookieId,null,journal+"2","5"}
         });
     }
 
-    public TestVerify(String expected, String index,String ledger, String bookieId, String instanceId, String journal, String layout){
+    public TestVerifyVerifySuperSet(String expected, String index, String ledger, String bookieId, String instanceId, String journal, String layout){
         this.expected = expected;
         this.builder = newBuilder();
         builder.setLedgerDirs(ledger);
@@ -60,6 +65,46 @@ public class TestVerify {
         builder.setLayoutVersion(Integer.parseInt(layout));
         this.secondCookie = builder.build();
     }
+
+    @Test
+    public void verifyIsSuperSet() throws BookieException.InvalidCookieException {
+        String message = null;
+        switch (this.expected){
+            case "ok":
+                try{
+                    firstCookie.verifyIsSuperSet(secondCookie);
+                    message = "ok";
+                    Assert.assertEquals(this.expected,message);
+                }
+                catch(Exception e){
+                    //mmi aspetto di non entrare mai qui
+                }
+                break;
+            case "null":
+                try{
+                    firstCookie.verifyIsSuperSet(secondCookie);
+                }
+                catch(NullPointerException e){
+                    message = e.getMessage();
+                }
+                Assert.assertEquals(null,message);
+                break;
+            case "too old":
+                //test identico a "not matching"
+            case "not matching":
+                try{
+                    firstCookie.verifyIsSuperSet(secondCookie);
+                }
+                catch (BookieException.InvalidCookieException e){
+                    message = e.getMessage();
+                }
+                Assert.assertTrue(message.contains(this.expected));
+                break;
+            default:
+                Assert.assertNotNull(message);
+        }
+    }
+
 
     @Test
     public void verifyTest() throws BookieException.InvalidCookieException {
@@ -85,6 +130,8 @@ public class TestVerify {
                 Assert.assertEquals(null,message);
                 break;
             case "too old":
+                //test identico a "not matching"
+            case "not matching":
                 try{
                     firstCookie.verify(secondCookie);
                 }
