@@ -1,3 +1,5 @@
+package Cookie;
+
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
 import org.junit.Assert;
@@ -52,7 +54,7 @@ public class TestBookieHostIp {
                 testCookie.isBookieHostCreatedFromIp();
             }
             catch(NullPointerException e){
-                Assert.assertTrue(e.getMessage().contains("null"));
+                Assert.assertNull(e.getMessage());
             }
         }
         else {

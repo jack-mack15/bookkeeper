@@ -1,3 +1,5 @@
+package Cookie;
+
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
 import org.junit.After;

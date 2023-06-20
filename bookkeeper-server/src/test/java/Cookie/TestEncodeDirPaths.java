@@ -1,3 +1,5 @@
+package Cookie;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,7 +11,7 @@ import java.util.Collection;
 import static org.apache.bookkeeper.bookie.Cookie.encodeDirPaths;
 
 @RunWith(value= Parameterized.class)
-public class TestDecodeDirPaths {
+public class TestEncodeDirPaths {
 
     private String expected;
     private String[] input;
@@ -25,7 +27,7 @@ public class TestDecodeDirPaths {
         });
     }
 
-    public TestDecodeDirPaths(String expected, String path1, String path2, String path3){
+    public TestEncodeDirPaths(String expected, String path1, String path2, String path3){
         this.expected = expected;
         this.input = new String[3];
         this.input[0] = path1;

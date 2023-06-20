@@ -1,3 +1,5 @@
+package Cookie;
+
 import org.apache.bookkeeper.bookie.BookieImpl;
 import org.apache.bookkeeper.conf.AbstractConfiguration;
 import org.apache.bookkeeper.conf.ClientConfiguration;

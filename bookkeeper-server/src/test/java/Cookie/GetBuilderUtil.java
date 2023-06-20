@@ -1,15 +1,20 @@
+package Cookie;
+
 import static org.apache.bookkeeper.bookie.Cookie.newBuilder;
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GetBuilderUtil {
+    private final String bookieId = "160.160.160.160:8000";
+    private final String journalDirs = "journal";
+    private final String ledgerDirs = "ledger";
+    private final String instanceId = "instance";
+    private final String indexDirs = "index";
     public Builder getBuilder(){
         int layoutVersion = 5;
-        String bookieId = "160.160.160.160:8000";
-        String journalDirs = "journal";
-        String ledgerDirs = "ledger";
-        String instanceId = "instance";
-        String indexDirs = "index";
 
         Builder myBuider = newBuilder();
 
@@ -22,4 +27,9 @@ public class GetBuilderUtil {
 
         return myBuider;
     }
+
+    public String getBookieId(){
+        return this.bookieId;
+    }
+
 }
