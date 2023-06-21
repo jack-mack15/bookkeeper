@@ -33,7 +33,7 @@ public class TestGenerateCookie {
         return Arrays.asList(new ServerConfiguration(),
                 new ServerConfiguration(new ClientConfiguration()),
                 null,
-                //per aumentare il coverage
+                //caso di test inserito per aumentare il coverage
                 new ServerConfiguration().setIndexDirName(new String[]{"index1","index2"}));
     }
 

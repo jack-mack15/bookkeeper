@@ -97,6 +97,6 @@ public class TestWriteToFile {
     @After
     public void cleanEnvironment(){
         File currentFile = new File(testFile);
-        currentFile.delete();
+        if(currentFile.exists()) currentFile.delete();
     }
 }

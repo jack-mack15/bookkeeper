@@ -29,7 +29,10 @@ public class TestCookieToString {
     public static Collection<String[]> getParameters(){
         return Arrays.asList(new String[][]{
                 //con approccio black box tutti i miei oracoli erano scorretti, quindi ho guardato
-                //l'implementazione per generare gli oracoli
+                //l'implementazione per generare gli oracoli.
+                //Un esempio di case che mi aspettavo fosse:
+                //{"3\nbookieId\njournal\nledger\ninstanceId\nindex",index,ledger,bookieId,instanceId,journal,"3"}
+                //ma per come è stato implementata il metodo, questo test fallisce
 
                 {"5\nbookieId\njournal\nledger\n",index,ledger,bookieId,instanceId,journal,"3"},
                 {"null",index,null,null,null,"","5"},

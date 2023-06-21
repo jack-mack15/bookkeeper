@@ -25,17 +25,17 @@ public class TestBookieHostIp {
     private boolean expected;
 
     @Parameters
-    public static Collection<String[]> getParameters(){
-        return Arrays.asList(new String[][]{
-                {"true","160.160.160.160:800"},
-                {"false","test:test"},
-                {"false",""},
-                {"false",null}
+    public static Collection<Object[]> getParameters(){
+        return Arrays.asList(new Object[][]{
+                {true,"160.160.160.160:800"},
+                {false,"test:test"},
+                {false,""},
+                {false,null}
                 });
     }
 
-    public TestBookieHostIp(String expected, String bookieId){
-        this.expected = Boolean.parseBoolean(expected);
+    public TestBookieHostIp(boolean expected, String bookieId){
+        this.expected = expected;
         this.bookieId = bookieId;
     }
 

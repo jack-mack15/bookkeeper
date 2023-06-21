@@ -41,22 +41,22 @@ public class TestVerifyVerifySuperSet {
     }
 
     @Parameters
-    public static Collection<String[]> getParameters(){
-        return Arrays.asList(new String[][]{
+    public static Collection<Object[]> getParameters(){
+        return Arrays.asList(new Object[][]{
                 //casi di test category partitioning con comb uni dimensionale
-                {"ok",index,ledger,bookieId,instanceId,journal,"3"},
-                {"null",index,null,null,null,"","5"},
-                {"too old",null,ledger,null,"",null,"0"},
-                {"too old","","",null,instanceId,null,"0"},
-                {"null",null,null,"",null,journal,"6"},
+                {"ok",index,ledger,bookieId,instanceId,journal,3},
+                {"null",index,null,null,null,"",5},
+                {"too old",null,ledger,null,"",null,0},
+                {"too old","","",null,instanceId,null,0},
+                {"null",null,null,"",null,journal,6},
 
                 //ulteriori casi di test per aumentare la coverage
-                {"not matching",index,ledger,bookieId,instanceId+"2",journal,"3"},
-                {"not matching",index,ledger,bookieId,null,journal+"2","5"}
+                {"not matching",index,ledger,bookieId,instanceId+"2",journal,3},
+                {"not matching",index,ledger,bookieId,null,journal+"2",5}
         });
     }
 
-    public TestVerifyVerifySuperSet(String expected, String index, String ledger, String bookieId, String instanceId, String journal, String layout){
+    public TestVerifyVerifySuperSet(String expected, String index, String ledger, String bookieId, String instanceId, String journal, int layout){
         this.expected = expected;
         this.builder = newBuilder();
         builder.setLedgerDirs(ledger);
@@ -64,7 +64,7 @@ public class TestVerifyVerifySuperSet {
         builder.setJournalDirs(journal);
         builder.setBookieId(bookieId);
         builder.setInstanceId(instanceId);
-        builder.setLayoutVersion(Integer.parseInt(layout));
+        builder.setLayoutVersion(layout);
         this.secondCookie = builder.build();
     }
 
@@ -79,7 +79,7 @@ public class TestVerifyVerifySuperSet {
                     Assert.assertEquals(this.expected,message);
                 }
                 catch(Exception e){
-                    //mmi aspetto di non entrare mai qui
+                    //mi aspetto di non entrare mai qui
                 }
                 break;
             case "null":
@@ -103,6 +103,8 @@ public class TestVerifyVerifySuperSet {
                 Assert.assertTrue(message.contains(this.expected));
                 break;
             default:
+                //se entro in questo branch significa che i miei casi di test sono scritti male
+                //quindi eseguire il seguente assert comporta al fallimento del test
                 Assert.assertNotNull(message);
         }
     }
@@ -143,6 +145,7 @@ public class TestVerifyVerifySuperSet {
                 Assert.assertTrue(message.contains(this.expected));
                 break;
             default:
+                //similmente al default del metodo di test precedente
                 Assert.assertNotNull(message);
         }
     }
