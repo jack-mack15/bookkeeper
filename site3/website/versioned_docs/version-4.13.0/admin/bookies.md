@@ -149,7 +149,7 @@ Accidentally replacing disks or removing directories can cause a bookie to fail 
 ```
 2017-05-29 18:19:13,790 - ERROR - [main:BookieServer314] – Exception running bookie server : @
 org.apache.bookkeeper.bookie.BookieException$InvalidCookieException
-.......at org.apache.bookkeeper.bookie.Cookie.verify(Cookie.java:82)
+.......at org.apache.bookkeeper.bookie.cookie.verify(cookie.java:82)
 .......at org.apache.bookkeeper.bookie.Bookie.checkEnvironment(Bookie.java:275)
 .......at org.apache.bookkeeper.bookie.Bookie.<init>(Bookie.java:351)
 ```

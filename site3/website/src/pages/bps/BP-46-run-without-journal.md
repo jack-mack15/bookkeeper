@@ -106,7 +106,7 @@ Cookies play an essential part in the bookkeeper replication protocol, but their
 
 When a bookie boots for the first time, it generates a cookie. The cookie encapsulates the identity of the bookie and should be considered immutable. This identity contains the advertised address of the bookie, the disks used for the journal, index, and ledger storage, and a unique ID. The bookie writes the cookie to ZK and each of the disks in use. On all subsequent boots, if the cookie is missing from any of these places, the bookie fails to boot.
 
-The absence of a disk's cookie implies that the rest of the disk's data is also missing. Cookie validation is performed on boot-up and prevents the boot from succeeding if the validation fails, thus preventing the bookie starting with undetected data loss. 
+The absence of a disk's cookie implies that the rest of the disk's data is also missing. cookie validation is performed on boot-up and prevents the boot from succeeding if the validation fails, thus preventing the bookie starting with undetected data loss. 
 
 This proposal improves the cookie mechanism by automating the resolution of a cookie validation error which currently requires human intervention to resolve. This automated feature will be configurable (enabled or disabled) and additionally a CLI command will be made available so an admin can manually run the operation (for when this feature is disabled - likely to be the default). 
 
@@ -130,7 +130,7 @@ The new mechanism for data loss detection is checking for an unclean shutdown (a
 
 The unclean shutdown detection will consist of setting a bit in the index on start-up and clearing it on shutdown. On subsequent start-up, the value will be checked and if it remains set, it knows that the prior shutdown was not clean.
 
-Cookie validation will continue to be used to detect booting with one or more missing or empty disks (that once existed and contained a cookie).
+cookie validation will continue to be used to detect booting with one or more missing or empty disks (that once existed and contained a cookie).
 
 ### Protection Mechanism
 

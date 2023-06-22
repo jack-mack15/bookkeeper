@@ -128,8 +128,8 @@ Unfortunately thru the codebase we used sometimes dummy BookieId that are not ma
 On the Bookie we introduce **a configuration option** (bookieid) to set a custom bookie id. 
 If you set this option then the Bookie will advertise itself on MetadataService using the configured id, and publish the 'bookie-rpc' endpoint as configured by 
 the **advertisedAddress** configuration option and the other network related options.
-This BookieId will be present only in the configuration file and it is the key to lookup the *Cookie* on the MetadataService.
-Inadvertently changing the BookieId will prevent the Bookie to boot as it won't find a matching Cookie.
+This BookieId will be present only in the configuration file and it is the key to lookup the *cookie* on the MetadataService.
+Inadvertently changing the BookieId will prevent the Bookie to boot as it won't find a matching cookie.
 There is no need to store the BookieId on the cookie or persist it on the local storage (ledgers, indexes or journal directories).
 
 #### Auditor and Replication Changes
