@@ -41,9 +41,6 @@ public class TestRegisterBookie {
         zkRegistrationManager = new ZKRegistrationManager(servConf,zooKeeper);
     }
 
-    //bookieserviceinfo ha 2 costruttori
-    //bookieid con parse e vuole una stringa
-    //si puo usare anche buildLegacyBookieServiceInfo di bookieserviceinfoutil per istanziare, è un metodo statico
     @Parameters
     public static Collection<Object> getParams() throws UnknownHostException {
 
