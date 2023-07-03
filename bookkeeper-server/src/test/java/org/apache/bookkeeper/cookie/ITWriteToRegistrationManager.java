@@ -82,7 +82,7 @@ public class ITWriteToRegistrationManager {
     }
 
     @Test
-    public void writeToRegistrationManagerTest() throws BookieException, InterruptedException, KeeperException {
+    public void almostCompleteTest() throws BookieException, InterruptedException, KeeperException {
 
         ZooKeeper mockedZook = mock(ZooKeeper.class);
         String bookieId = "/ledgers/cookies/" + getBuilderUtil.getBookieId();

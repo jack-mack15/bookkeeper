@@ -17,26 +17,35 @@ public class TestEncodeDirPaths {
     private String[] input;
 
     @Parameters
-    public static Collection<String[]> getParameters(){
-        return Arrays.asList(new String[][]{
-                {"3\tpath1\tpath2\tpath3", "path1","path2","path3"}, // expected, input1, input2, input3
-                {"3\tpath1\tpath2\t", "path1","path2",""},           // expected, input1, input2, input3
-                {"3\tnull\t\t", null,"",""},                         // expected, input1, input2, input3
-                {"3\tpath1\t\tnull", "path1","",null},               // expected, input1, input2, input3
-                {"3\t\tnull\tpath3", "",null,"path3"}                // expected, input1, input2, input3
+    public static Collection<Object[]> getParameters(){
+        String[] valid = {"path1","path2","path3","path4"};
+        String[] allNull = {null,null,null,null};
+        String[] allEmpty = {"","","",""};
+        String[] semi = {"path1","path2","",null};
+
+        return Arrays.asList(new Object[][]{
+                {"4\tpath1\tpath2\tpath3\tpath4", valid},   // expected, input
+                {"4\tnull\tnull\tnull\tnull", allNull},     // expected, input
+                {"4\t\t\t\t", allEmpty},                    // expected, input
+                {"4\tpath1\tpath2\t\tnull", semi},          // expected, input
+                {null,null}
         });
     }
 
-    public TestEncodeDirPaths(String expected, String path1, String path2, String path3){
+    public TestEncodeDirPaths(String expected, String[] paths){
         this.expected = expected;
-        this.input = new String[3];
-        this.input[0] = path1;
-        this.input[1] = path2;
-        this.input[2] = path3;
+        this.input = paths;
     }
     @Test
     public void encodeTest(){
-        String result = encodeDirPaths(this.input);
-        Assert.assertEquals(this.expected, result);
+        String result = null;
+        try {
+            result = encodeDirPaths(this.input);
+            Assert.assertEquals(this.expected, result);
+        }
+        catch(Exception e){
+            Assert.assertTrue(e instanceof NullPointerException);
+            Assert.assertEquals(expected,result);
+        }
     }
 }

@@ -19,9 +19,7 @@ public class TestVerifyVerifySuperSet {
 
     private String expected;
     private Cookie firstCookie;
-    private Cookie secondCookie;
-    private Builder builder;
-
+    private Cookie testCookie;
     private static String ledger = "ledger";
     private static String bookieId = "bookeId";
     private static String index = "index";
@@ -42,30 +40,83 @@ public class TestVerifyVerifySuperSet {
 
     @Parameters
     public static Collection<Object[]> getParameters(){
-        return Arrays.asList(new Object[][]{
-                //casi di test category partitioning con comb uni dimensionale
-                {"ok",index,ledger,bookieId,instanceId,journal,3},
-                {"null",index,null,null,null,"",5},
-                {"too old",null,ledger,null,"",null,0},
-                {"too old","","",null,instanceId,null,0},
-                {"null",null,null,"",null,journal,6},
 
-                //ulteriori casi di test per aumentare la coverage
-                {"not matching",index,ledger,bookieId,instanceId+"2",journal,3},
-                {"not matching",index,ledger,bookieId,null,journal+"2",5}
-        });
-    }
+        Builder builder = newBuilder();
 
-    public TestVerifyVerifySuperSet(String expected, String index, String ledger, String bookieId, String instanceId, String journal, int layout){
-        this.expected = expected;
-        this.builder = newBuilder();
         builder.setLedgerDirs(ledger);
         builder.setIndexDirs(index);
         builder.setJournalDirs(journal);
         builder.setBookieId(bookieId);
         builder.setInstanceId(instanceId);
-        builder.setLayoutVersion(layout);
-        this.secondCookie = builder.build();
+        builder.setLayoutVersion(6);
+        Cookie valid = builder.build();
+
+        builder.setLedgerDirs(null);
+        builder.setIndexDirs(index);
+        builder.setJournalDirs("");
+        builder.setBookieId(null);
+        builder.setInstanceId(null);
+        builder.setLayoutVersion(5);
+        Cookie nullCookie1 = builder.build();
+
+        builder.setLedgerDirs(null);
+        builder.setIndexDirs(index);
+        builder.setJournalDirs(null);
+        builder.setBookieId(null);
+        builder.setInstanceId("");
+        builder.setLayoutVersion(6);
+        Cookie nullCookie2 = builder.build();
+
+        builder.setLedgerDirs(ledger);
+        builder.setIndexDirs(null);
+        builder.setJournalDirs(null);
+        builder.setBookieId(null);
+        builder.setInstanceId("");
+        builder.setLayoutVersion(0);
+        Cookie tooOld1 = builder.build();
+
+        builder.setLedgerDirs("");
+        builder.setIndexDirs("");
+        builder.setJournalDirs(null);
+        builder.setBookieId(null);
+        builder.setInstanceId(instanceId);
+        builder.setLayoutVersion(-1);
+        Cookie tooOld2 = builder.build();
+
+        //per aumentare il coverage
+        builder.setLedgerDirs(ledger);
+        builder.setIndexDirs(index);
+        builder.setJournalDirs(journal);
+        builder.setBookieId(bookieId);
+        builder.setInstanceId(instanceId+"2");
+        builder.setLayoutVersion(6);
+        Cookie notMatch1 = builder.build();
+
+        builder.setLedgerDirs(ledger);
+        builder.setIndexDirs(index);
+        builder.setJournalDirs(journal+"2");
+        builder.setBookieId(bookieId+"2");
+        builder.setInstanceId(instanceId+"2");
+        builder.setLayoutVersion(5);
+        Cookie notMatch2 = builder.build();
+
+        return Arrays.asList(new Object[][]{
+                //casi di test category partitioning con comb uni dimensionale
+                {"ok",      valid},
+                {"null",    nullCookie1},
+                {"too old", tooOld1},
+                {"too old", tooOld2},
+                {"null",    nullCookie2},
+                {"null",    null},
+                //ulteriori casi di test per aumentare la coverage
+                {"not matching",notMatch1},
+                {"not matching",notMatch2}
+        });
+    }
+
+    public TestVerifyVerifySuperSet(String expected, Cookie cookie){
+        this.expected = expected;
+        this.testCookie = cookie;
     }
 
     @Test
@@ -74,7 +125,7 @@ public class TestVerifyVerifySuperSet {
         switch (this.expected){
             case "ok":
                 try{
-                    firstCookie.verifyIsSuperSet(secondCookie);
+                    firstCookie.verifyIsSuperSet(testCookie);
                     message = "ok";
                     Assert.assertEquals(this.expected,message);
                 }
@@ -84,7 +135,7 @@ public class TestVerifyVerifySuperSet {
                 break;
             case "null":
                 try{
-                    firstCookie.verifyIsSuperSet(secondCookie);
+                    firstCookie.verifyIsSuperSet(testCookie);
                 }
                 catch(NullPointerException e){
                     message = e.getMessage();
@@ -95,7 +146,7 @@ public class TestVerifyVerifySuperSet {
                 //test identico a "not matching"
             case "not matching":
                 try{
-                    firstCookie.verifyIsSuperSet(secondCookie);
+                    firstCookie.verifyIsSuperSet(testCookie);
                 }
                 catch (BookieException.InvalidCookieException e){
                     message = e.getMessage();
@@ -103,8 +154,7 @@ public class TestVerifyVerifySuperSet {
                 Assert.assertTrue(message.contains(this.expected));
                 break;
             default:
-                //se entro in questo branch significa che i miei casi di test sono scritti male
-                //quindi eseguire il seguente assert comporta al fallimento del test
+                //se entro in questo branch significa che ci sono degli errori
                 Assert.assertNotNull(message);
         }
     }
@@ -116,7 +166,7 @@ public class TestVerifyVerifySuperSet {
         switch (this.expected){
             case "ok":
                 try{
-                    firstCookie.verify(secondCookie);
+                    firstCookie.verify(testCookie);
                     message = "ok";
                     Assert.assertEquals(this.expected,message);
                 }
@@ -126,7 +176,7 @@ public class TestVerifyVerifySuperSet {
                 break;
             case "null":
                 try{
-                    firstCookie.verify(secondCookie);
+                    firstCookie.verify(testCookie);
                 }
                 catch(NullPointerException e){
                     message = e.getMessage();
@@ -137,7 +187,7 @@ public class TestVerifyVerifySuperSet {
                 //test identico a "not matching"
             case "not matching":
                 try{
-                    firstCookie.verify(secondCookie);
+                    firstCookie.verify(testCookie);
                 }
                 catch (BookieException.InvalidCookieException e){
                     message = e.getMessage();

@@ -21,56 +21,65 @@ import static org.apache.bookkeeper.bookie.Cookie.readFromDirectory;
 @RunWith(value= Parameterized.class)
 public class TestReadFromDirectory {
     private static Cookie myTestCookie;
-    private static Builder myBuider;
-    private static final String invalidFile = "/bookkeeper-server/src/test/testFile";
-    private static final String emptyFile = "";
-    private String expected;
-    private  String testPath;
+    private static Builder myBuilder;
+    private boolean expected;
+    private File testPath;
     @BeforeClass
     public static void setUp() throws IOException {
 
         GetBuilderUtil getBuilderUtil = new GetBuilderUtil();
-        myBuider = getBuilderUtil.getBuilder();
+        myBuilder = getBuilderUtil.getBuilder();
 
-        myTestCookie = myBuider.build();
+        myTestCookie = myBuilder.build();
         Path path = Paths.get("");
-        String currDirr = path.toAbsolutePath().toString();
+        String currDirr = path.toAbsolutePath()+"/fortest/";
         myTestCookie.writeToDirectory(new File(currDirr));
 
     }
     @Parameters
-    public static Collection<String[]> getParameters(){
+    public static Collection<Object[]> getParameters(){
         Path path = Paths.get("");
-        String currentDir = path.toAbsolutePath().toString();
-        return Arrays.asList(new String[][]{
-                {"No such file", invalidFile},
-                {"No such file", emptyFile},
-                {"valid",currentDir}
+        String validDir = path.toAbsolutePath()+"/fortest/";
+        out.println(validDir);
+        String invalidDir = "/bookkeeper-server/src/test/testFile";
+        String emptyDir = "";
+        return Arrays.asList(new Object[][]{
+                {true, new File(validDir)},
+                {false, new File(invalidDir)},
+                {false, new File(emptyDir)},
+                {false,null}
         });
     }
 
-    public TestReadFromDirectory(String expected, String testPath){
+    public TestReadFromDirectory(boolean expected, File testPath){
         this.expected = expected;
         this.testPath = testPath;
     }
-    @Test
-    public void readFromDirectoryTest() throws IOException {
 
-        out.println(testPath);
-        File currentPath = new File(testPath);
+    @Test
+    public void readFromDirectoryTest() {
 
         try {
+            Cookie readCookie = readFromDirectory(testPath);
 
-            Cookie readCookie = readFromDirectory(currentPath);
             out.println(myTestCookie.toString());
             out.println(readCookie.toString());
-            Assert.assertTrue(myTestCookie.equals(readCookie));
 
+            Assert.assertTrue(myTestCookie.equals(readCookie));
+            Assert.assertTrue(expected);
         }
         catch (IOException e){
             String messageInvalidFile = e.getMessage();
-            Assert.assertTrue(messageInvalidFile.contains(expected));
+            String expectedMess = "No such file";
+            Assert.assertTrue(messageInvalidFile.contains(expectedMess));
+            Assert.assertFalse(expected);
         }
+        catch (Exception e){
+            Assert.assertTrue(e instanceof NullPointerException);
+            Assert.assertFalse(expected);
+        }
+
+
     }
 
     //cleanUp() crea conflitti con pit
