@@ -1,20 +1,22 @@
-package zkregistrationmanager;
+package org.apache.bookkeeper.zkregistrationmanager;
 
 import org.apache.bookkeeper.conf.ServerConfiguration;
 import org.apache.bookkeeper.discover.ZKRegistrationManager;
+import org.apache.bookkeeper.meta.AbstractZkLedgerManagerFactory;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.mockito.ArgumentMatchers.any;
 
-public class ITInitNewCluster extends AbstractClusterTest{
-
+public class ITNukeExistingCluster extends AbstractClusterTest {
     private SetUpForZKTesting setUpper;
     private ZooKeeper zkc;
     private ZKRegistrationManager zkRegistrationManager;
     private ServerConfiguration conf;
+    private AbstractZkLedgerManagerFactory mockFact;
 
     @Before
     public void setUp() throws Exception {
@@ -23,54 +25,28 @@ public class ITInitNewCluster extends AbstractClusterTest{
         conf = new ServerConfiguration();
     }
 
+
     @Test
     public void allMockedTest() throws Exception {
 
+        //mocked ZooKeeper
+        setMockZook(false,true);
         //mocked ZKMetadataDriverBase
         setMockedMetadata(conf);
-        //mock Zookeper
-        setMockZook(true,true);
-        //mocked Op.create
-        setMockedOp();
-        //mocked AbstractZkLedgerManagerFactory
-        setMockedLedMan();
 
-        zkRegistrationManager = new ZKRegistrationManager(conf, mockZook);
-
-        boolean result = zkRegistrationManager.initNewCluster();
+        zkRegistrationManager = new ZKRegistrationManager(conf,mockZook);
+        boolean result = zkRegistrationManager.nukeExistingCluster();
 
         Assert.assertTrue(result);
         verifyMockedMetadata(conf);
-        verifyMockedZook(true,true,1);
-        verifyMockedOp(3);
-        verifyMockedLedMan();
-
-    }
-
-    @Test
-    public void partialMockedTest() throws Exception {
-        //mock Zookeper
-        setMockZook(true,false);
-        //mocked Op.create
-        setMockedOp();
-        //mocked AbstractZkLedgerManagerFactory
-        setMockedLedMan();
-
-        zkRegistrationManager = new ZKRegistrationManager(conf,mockZook);
-
-        boolean result = zkRegistrationManager.initNewCluster();
-
-        Assert.assertTrue(result);
-        verifyMockedZook(true,false,1);
-        verifyMockedOp(4);
-        verifyMockedLedMan();
-
+        verifyMockedZook(false,true,1);
     }
 
     @Test
     public void pureTest() throws Exception {
         zkRegistrationManager = new ZKRegistrationManager(conf,zkc);
-        boolean result = zkRegistrationManager.initNewCluster();
+        boolean result = zkRegistrationManager.nukeExistingCluster();
+
         Assert.assertTrue(result);
     }
 

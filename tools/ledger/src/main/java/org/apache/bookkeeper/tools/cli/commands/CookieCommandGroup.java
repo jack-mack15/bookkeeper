@@ -35,7 +35,7 @@ import org.apache.bookkeeper.tools.framework.CliSpec;
  */
 public class CookieCommandGroup extends CliCommandGroup<BKFlags> {
 
-    private static final String NAME = "cookie";
+    private static final String NAME = "org/apache/bookkeeper";
     private static final String DESC = "Commands on operating cookies";
 
     private static final CliSpec<BKFlags> spec = CliSpec.<BKFlags>newBuilder()

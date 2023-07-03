@@ -1,4 +1,4 @@
-package cookie;
+package org.apache.bookkeeper.cookie;
 
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
@@ -94,9 +94,10 @@ public class TestWriteToFile {
         }
     }
 
-    @After
-    public void cleanEnvironment(){
-        File currentFile = new File(testFile);
-        if(currentFile.exists()) currentFile.delete();
-    }
+    //cleanEnvironment() crea conflitti con pit
+    //@After
+    //public void cleanEnvironment(){
+    //    File currentFile = new File(testFile);
+    //    if(currentFile.exists()) currentFile.delete();
+    //}
 }

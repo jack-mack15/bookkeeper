@@ -1,4 +1,4 @@
-package cookie;
+package org.apache.bookkeeper.cookie;
 
 import org.junit.Assert;
 import org.junit.Test;

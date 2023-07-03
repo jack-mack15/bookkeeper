@@ -1,4 +1,4 @@
-package cookie;
+package org.apache.bookkeeper.cookie;
 
 import org.apache.bookkeeper.bookie.BookieException;
 import org.apache.bookkeeper.bookie.BookieImpl;
@@ -9,18 +9,19 @@ import org.apache.bookkeeper.discover.ZKRegistrationManager;
 import org.apache.bookkeeper.net.BookieId;
 import org.apache.bookkeeper.versioning.LongVersion;
 import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.ZooKeeper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.apache.zookeeper.ZooKeeper;
+
 import java.net.UnknownHostException;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
-
-public class ITDeleteFromRegistrationManager {
+public class ITWriteToRegistrationManager {
 
     private ServerConfiguration testServConf;
     private GetBuilderUtil getBuilderUtil;
@@ -31,7 +32,7 @@ public class ITDeleteFromRegistrationManager {
     private ZKRegistrationManager zkRegistrationManager;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         getBuilderUtil = new GetBuilderUtil();
         myBuilder = getBuilderUtil.getBuilder();
         testCookie = myBuilder.build();
@@ -41,67 +42,56 @@ public class ITDeleteFromRegistrationManager {
     }
 
     @Test
-    public void allMockedTest() throws BookieException, UnknownHostException {
+    public void allMockedTest() throws UnknownHostException, BookieException {
         //qui mocko tutti i messaggi dalla classe Cookie alle altre classi.
         //In particolare mocko la chiamata a metodo di BookImpl getBookieId()
-        //e a metodo di ZKRegistrationManager removeCookie()
-
+        //e a metodo di ZKRegistrationManager writeCookie()
         ZKRegistrationManager mockedZKRegMan = mock(ZKRegistrationManager.class);
 
 
         BookieId testBookieId = BookieId.parse(getBuilderUtil.getBookieId());
-
         MockedStatic<BookieImpl> mockBook = Mockito.mockStatic(BookieImpl.class);
         mockBook.when(() -> BookieImpl.getBookieId(any()))
                 .thenReturn(testBookieId);
+        doNothing().when(mockedZKRegMan).writeCookie(eq(testBookieId), any());
 
+        testCookie.writeToRegistrationManager(mockedZKRegMan, testServConf, testLongVersion);
 
-        doNothing().when(mockedZKRegMan).removeCookie(testBookieId,testLongVersion);
-
-        testCookie.deleteFromRegistrationManager(mockedZKRegMan, testServConf, testLongVersion);
-
-        Mockito.verify(mockedZKRegMan).removeCookie(testBookieId,testLongVersion);
-
+        verify(mockedZKRegMan).writeCookie(eq(testBookieId), any());
         mockBook.verify(
                 () -> BookieImpl.getBookieId(any()),
                 times(1)
         );
-
         mockBook.close();
     }
 
     @Test
-    public void mockedRemoveCookieTest() throws BookieException {
+    public void mockedWriteCookieTest() throws BookieException {
         //qui "rilascio" il mock su BookImpl sul metodo getBookieId(), lascio il mock su
-        //ZKRegistrationManager removeCookie()
+        //ZKRegistrationManager writeCookie()
 
         ZKRegistrationManager mockedZKRegMan = mock(ZKRegistrationManager.class);
-        BookieId testBookieid = BookieId.parse(getBuilderUtil.getBookieId());
+        String bookieId = getBuilderUtil.getBookieId();
+        BookieId testBookieId = BookieId.parse(bookieId);
 
-        doNothing().when(mockedZKRegMan).removeCookie(testBookieid,testLongVersion);
+        doNothing().when(mockedZKRegMan).writeCookie(eq(testBookieId), any());
 
-        testCookie.deleteFromRegistrationManager(mockedZKRegMan, testServConf, testLongVersion);
+        testCookie.writeToRegistrationManager(mockedZKRegMan, testServConf, testLongVersion);
 
-        Mockito.verify(mockedZKRegMan).removeCookie(testBookieid,testLongVersion);
+        verify(mockedZKRegMan).writeCookie(eq(testBookieId), any());
     }
-
 
     @Test
-    public void almostCompleteTest() throws InterruptedException, KeeperException, BookieException {
-        //qui rimuovo anche il mock sul metodo removeCookie() di ZKRegistrationManager.
-        //Introduco un mock su ZooKeeper per arrestarmi al corrente livello di scambio
-        //messaggi
+    public void writeToRegistrationManagerTest() throws BookieException, InterruptedException, KeeperException {
 
         ZooKeeper mockedZook = mock(ZooKeeper.class);
-        String bookieId = "/ledgers/cookies/"+getBuilderUtil.getBookieId();
+        String bookieId = "/ledgers/cookies/" + getBuilderUtil.getBookieId();
 
-        doNothing().when(mockedZook).delete(bookieId,this.testVersion);
+        when(mockedZook.setData(eq(bookieId), any(), anyInt())).thenReturn(null);
+        zkRegistrationManager = new ZKRegistrationManager(testServConf, mockedZook);
 
-        zkRegistrationManager = new ZKRegistrationManager(testServConf,mockedZook);
+        testCookie.writeToRegistrationManager(zkRegistrationManager, testServConf, testLongVersion);
 
-        testCookie.deleteFromRegistrationManager(zkRegistrationManager, testServConf, testLongVersion);
-
-        Mockito.verify(mockedZook).delete(bookieId,this.testVersion);
+        verify(mockedZook).setData(eq(bookieId), any(), anyInt());
     }
-
 }

@@ -1,12 +1,10 @@
-package cookie;
+package org.apache.bookkeeper.cookie;
 
 import org.apache.bookkeeper.bookie.BookieImpl;
 import org.apache.bookkeeper.conf.ClientConfiguration;
 import org.apache.bookkeeper.conf.ServerConfiguration;
 import org.apache.bookkeeper.net.BookieId;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -22,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class TestGenerateCookie {
 
     private ServerConfiguration conf;
+    private MockedStatic<BookieImpl> mockBook;
 
     @Parameters
     public static Collection<ServerConfiguration> getParameters(){
@@ -36,9 +35,9 @@ public class TestGenerateCookie {
         this.conf = conf;
     }
 
-    @BeforeClass
-    public static void setUpMock(){
-        MockedStatic<BookieImpl> mockBook = Mockito.mockStatic(BookieImpl.class);
+    @Before
+    public void setUpMock(){
+        mockBook = Mockito.mockStatic(BookieImpl.class);
         mockBook.when(() -> BookieImpl.getBookieId(any()))
                 .thenReturn(BookieId.parse("mockedBookieId"));
     }
@@ -55,5 +54,10 @@ public class TestGenerateCookie {
         catch (NullPointerException e){
             Assert.assertNull(testBuilder);
         }
+    }
+
+    @After
+    public void closeMock(){
+        mockBook.close();
     }
 }

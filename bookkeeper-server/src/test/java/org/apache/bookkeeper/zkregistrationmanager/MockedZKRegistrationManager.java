@@ -1,4 +1,4 @@
-package zkregistrationmanager;
+package org.apache.bookkeeper.zkregistrationmanager;
 
 import org.apache.bookkeeper.conf.ServerConfiguration;
 import org.apache.bookkeeper.discover.ZKRegistrationManager;

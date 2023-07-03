@@ -1,4 +1,4 @@
-package cookie;
+package org.apache.bookkeeper.cookie;
 
 import org.apache.bookkeeper.bookie.Cookie;
 import org.apache.bookkeeper.bookie.Cookie.Builder;
@@ -73,11 +73,12 @@ public class TestReadFromDirectory {
         }
     }
 
-    @AfterClass
-    public static void cleanUp(){
-        Path path = Paths.get("");
-        String currDir = path.toAbsolutePath().toString();
-        File version = new File(currDir +"/VERSION");
-        version.delete();
-    }
+    //cleanUp() crea conflitti con pit
+    //@AfterClass
+    //public static void cleanUp(){
+    //    Path path = Paths.get("");
+    //    String currDir = path.toAbsolutePath().toString();
+    //    File version = new File(currDir +"/VERSION");
+    //    version.delete();
+    //}
 }

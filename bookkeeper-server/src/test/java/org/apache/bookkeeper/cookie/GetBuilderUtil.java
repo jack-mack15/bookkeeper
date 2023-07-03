@@ -1,4 +1,4 @@
-package cookie;
+package org.apache.bookkeeper.cookie;
 
 import static org.apache.bookkeeper.bookie.Cookie.newBuilder;
 

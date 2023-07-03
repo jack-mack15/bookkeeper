@@ -1,4 +1,4 @@
-package zkregistrationmanager;
+package org.apache.bookkeeper.zkregistrationmanager;
 
 
 import org.apache.zookeeper.WatchedEvent;
