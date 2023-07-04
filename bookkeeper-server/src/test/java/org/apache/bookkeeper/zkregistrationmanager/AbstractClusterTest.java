@@ -35,7 +35,6 @@ public abstract class AbstractClusterTest {
         mockZook = mock(ZooKeeper.class);
         if(isExists) {
             Mockito.doReturn(null).when(mockZook).exists(null,false);
-
         }
         if(isMulti)
             Mockito.doReturn(null).when(mockZook).multi(anyList());

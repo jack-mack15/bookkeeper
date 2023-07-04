@@ -8,6 +8,7 @@ import org.apache.bookkeeper.discover.ZKRegistrationManager;
 import org.apache.bookkeeper.net.BookieId;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +25,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(value= Parameterized.class)
-public class TestRegisterBookie {
+public class ITRegisterBookie {
 
     private ServerConfiguration servConf;
     private ZooKeeper zooKeeper;
-    private ZKRegistrationManager zkRegistrationManager;
     private BookieId bookieId;
     private boolean readOnly;
     private BookieServiceInfo bookieServiceInfo;
@@ -37,8 +37,6 @@ public class TestRegisterBookie {
     @Before
     public void setUp() throws IOException {
         servConf = new ServerConfiguration();
-        zooKeeper = new ZooKeeper("connectString", 15000, WatcherUtil.getWatcher(), true);
-        zkRegistrationManager = new ZKRegistrationManager(servConf,zooKeeper);
     }
 
     @Parameters
@@ -53,7 +51,7 @@ public class TestRegisterBookie {
 
     }
 
-    public TestRegisterBookie(String expected, BookieId bookieId, boolean readOnly, BookieServiceInfo bookieServiceInfo){
+    public ITRegisterBookie(String expected, BookieId bookieId, boolean readOnly, BookieServiceInfo bookieServiceInfo){
         this.expected = expected;
         this.bookieId = bookieId;
         this.readOnly = readOnly;
@@ -96,19 +94,15 @@ public class TestRegisterBookie {
 
     }
 
-    //@Test
-    //public void test() throws BookieException {
-    //    zkRegistrationManager.registerBookie(bookieId,readOnly,bookieServiceInfo);
-    //}
 
-    /*
+
+
     @Test
     public void partialMockedTest() throws BookieException, InterruptedException, KeeperException, IOException {
-        //testo il metodo registerBookie mockando le istanze di altre classi che ricevono un messaggio
 
         ZooKeeper mockedZook = mock(ZooKeeper.class);
         if(readOnly)
-            when(mockedZook.exists(anyString(), any())).thenReturn(null);
+            when(mockedZook.exists(anyString(), anyBoolean())).thenReturn(null);
         when(mockedZook.create(anyString(),any(), any(), any())).thenReturn(null);
         MockedZKRegistrationManager mockZK = new MockedZKRegistrationManager(servConf,mockedZook);
         MockedZKRegistrationManager spyZK = spy(mockZK);
@@ -118,9 +112,13 @@ public class TestRegisterBookie {
             spyZK.registerBookie(bookieId,readOnly,bookieServiceInfo);
 
             verify(spyZK).checkRegNodeAndWaitExpired(anyString());
-            Mockito.verify(mockedZook).create(anyString(),any(), any(), any());
-            if(readOnly)
-                Mockito.verify(mockedZook).exists(anyString(), any());
+            if(readOnly) {
+                Mockito.verify(mockedZook).exists(anyString(), anyBoolean());
+                Mockito.verify(mockedZook,times(2)).create(anyString(), any(), any(), any());
+            }
+            else{
+                Mockito.verify(mockedZook).create(anyString(),any(), any(), any());
+            }
 
         }
 
@@ -131,26 +129,4 @@ public class TestRegisterBookie {
             Assert.assertEquals("test3",expected);
         }
     }
-
-
-/*
-    @Test
-    public void pureTest() throws BookieException, InterruptedException, KeeperException {
-
-        ZooKeeper mockedZook = mock(ZooKeeper.class);
-
-        if(!readOnly)
-            when(mockedZook.create(anyString(),any(), any(), any())).thenReturn(null);
-        else
-            when(mockedZook.exists(anyString(), anyBoolean())).thenReturn(null);
-
-        zkRegistrationManager.registerBookie(bookieId,readOnly,bookieServiceInfo);
-
-        if(!readOnly)
-            Mockito.verify(mockedZook).create(anyString(),any(), any(), any());
-        else
-            Mockito.verify(mockedZook).exists(anyString(), anyBoolean());
-    }
-*/
-
 }
