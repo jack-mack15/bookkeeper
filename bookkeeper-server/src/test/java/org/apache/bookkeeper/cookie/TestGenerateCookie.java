@@ -9,6 +9,8 @@ import org.junit.runners.Parameterized.Parameters;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
+
+import static java.lang.System.out;
 import static org.apache.bookkeeper.bookie.Cookie.*;
 
 @RunWith(value= Parameterized.class)
@@ -28,8 +30,13 @@ public class TestGenerateCookie {
         ServerConfiguration invalidServ = new ServerConfiguration();
 
         //aggiunto dopo i report
-        ServerConfiguration lateCase = new ServerConfiguration();
-        lateCase.setIndexDirName(new String[]{"index1","index2"});
+        ServerConfiguration lateCase = new ServerConfiguration(new ClientConfiguration());
+        String[] dirs = new String[2];
+        dirs[0] = "index1";
+        dirs[1] = "index2";
+        lateCase.setBookieId("160.160.160.160:800");
+        lateCase.setIndexDirName(dirs);
+        out.println(lateCase.getIndexDirs().toString());
 
         return Arrays.asList(new Object[][]{
                 {true, validServ},
@@ -37,7 +44,7 @@ public class TestGenerateCookie {
                 {false, invalidServ},
                 {false, null},
                 //aggiunto dopo report
-                {false, lateCase}
+                {true, lateCase}
         });
     }
 
