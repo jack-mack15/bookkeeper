@@ -1,0 +1,6 @@
+5
+bookieHost: "160.160.160.160:8000"
+journalDir: "journal"
+ledgerDirs: "ledger"
+instanceId: "instance"
+indexDirs: "index"

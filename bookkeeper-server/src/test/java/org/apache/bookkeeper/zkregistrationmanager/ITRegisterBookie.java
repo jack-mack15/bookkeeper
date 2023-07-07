@@ -98,7 +98,7 @@ public class ITRegisterBookie {
 
 
     @Test
-    public void partialMockedTest() throws BookieException, InterruptedException, KeeperException, IOException {
+    public void catchExceptionTest() throws BookieException, InterruptedException, KeeperException, IOException {
 
         ZooKeeper mockedZook = mock(ZooKeeper.class);
         if(readOnly)

@@ -87,6 +87,14 @@ public class TestVerifyVerifySuperSet {
         builder.setLedgerDirs(ledger);
         builder.setIndexDirs(index);
         builder.setJournalDirs(journal);
+        builder.setBookieId(bookieId+"2");
+        builder.setInstanceId(instanceId);
+        builder.setLayoutVersion(6);
+        Cookie forBadua = builder.build();
+
+        builder.setLedgerDirs(ledger);
+        builder.setIndexDirs(index);
+        builder.setJournalDirs(journal);
         builder.setBookieId(bookieId);
         builder.setInstanceId(instanceId+"2");
         builder.setLayoutVersion(6);
@@ -110,7 +118,8 @@ public class TestVerifyVerifySuperSet {
                 {"null",    null},
                 //ulteriori casi di test per aumentare la coverage
                 {"not matching",notMatch1},
-                {"not matching",notMatch2}
+                {"not matching",notMatch2},
+                {"not matching",forBadua}
         });
     }
 
